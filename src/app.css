@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  
+}
+
+@layer components {
+  .icon {
+    @apply block w-6 h-6;
+  }
+
+  .icon svg {
+    @apply !w-full !h-full !fill-current;
+  }
+
+  .bg-make-transparent {
+    background: repeating-conic-gradient(rgb(246,246,249) 0%,rgb(246,246,249) 25%,transparent 0%,transparent 50%) 50% center / 20px 20px;
+  }
+}

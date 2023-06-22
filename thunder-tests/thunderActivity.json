@@ -1,0 +1,16 @@
+[
+  {
+    "_id": "447ec3fb-1696-4977-baba-e53cb9519eb0",
+    "colId": "history",
+    "containerId": "",
+    "name": "https://tiki.vn/",
+    "url": "https://tiki.vn/",
+    "method": "GET",
+    "sortNum": 0,
+    "created": "2023-06-22T10:15:39.791Z",
+    "modified": "2023-06-22T10:15:39.791Z",
+    "headers": [],
+    "params": [],
+    "tests": []
+  }
+]
