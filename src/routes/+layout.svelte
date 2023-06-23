@@ -1,6 +1,6 @@
 <script>
-  import Alert from "$lib/admin/Alert.svelte";
-  import Loading from "$lib/admin/Loading.svelte";
+  import Alert from "$components/admin/Alert.svelte";
+  import Loading from "$components/admin/Loading.svelte";
 	import "../app.css";
 </script>
 

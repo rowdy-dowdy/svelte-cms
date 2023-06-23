@@ -1,7 +1,12 @@
 <script lang="ts">
+  import ModalEditAddCollection from '$components/admin/modal/ModalEditAddCollection.svelte';
+  import { Button } from 'flowbite-svelte';
+
   export let data
 
   $: dataFilter = data.dataTypes
+
+  let hiddenModalEditAddCollection = true
 </script>
 
 <div class="w-full h-full flex">
@@ -18,14 +23,14 @@
           <span>users</span>
         </div> -->
 
-        <!-- {dataFilter.map((v,i) => 
-          <Link key={v.id} href={`/admin/${v.name}`} class="flex items-center space-x-2 rounded hover:bg-gray-200 p-2 cursor-pointer">
+        {#each dataFilter as item (item.id)}
+          <a href="/admin/{item.name}" class="flex items-center space-x-2 rounded hover:bg-gray-200 p-2 cursor-pointer">
             <span class="icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M20 5h-8.586L9.707 3.293A.997.997 0 0 0 9 3H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2zM4 19V7h16l.002 12H4z"></path></svg>
             </span>
-            <span>{v.name}</span>
-          </Link>
-        )} -->
+            <span>{item.name}</span>
+          </a>
+        {/each}
 
         {#if dataFilter.length == 0}
           <div class='py-4 text-center'>
@@ -33,14 +38,14 @@
           </div>
         {/if}
 
-        <!-- <Button class='!mt-4' variant="outlined" style={{borderWidth: 2, borderColor: grey[900]}} startIcon={(
+        <Button outline size="sm" on:click={() => hiddenModalEditAddCollection = false}>
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path></svg>
           </span>
-        )} onClick={() => setIsOpenModalAddCollection(true)}>
-          New collection
+          <span>New collection</span>
         </Button>
-        <ModalAddCollection open={isOpenModalAddCollection} onClose={closeModalAddCollection} /> -->
+
+        <ModalEditAddCollection bind:hidden={hiddenModalEditAddCollection} />
       </div>
     </div>
   </div>

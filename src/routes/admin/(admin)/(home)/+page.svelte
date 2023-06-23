@@ -1,4 +1,1 @@
-<script lang="ts">
-</script>
-
-home
+<p class="p-8">Choose a database table to view</p>
