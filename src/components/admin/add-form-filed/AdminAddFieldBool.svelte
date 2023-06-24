@@ -6,7 +6,7 @@
   import { createEventDispatcher, onMount } from "svelte";
 
   export let value: string
-  let icon = DATA_FIELDS.find(v => v.fieldName == 'Plain text')?.icon
+  let icon = DATA_FIELDS.find(v => v.fieldName == 'Bool')?.icon
 
   let inputRef: HTMLInputElement | null
 
