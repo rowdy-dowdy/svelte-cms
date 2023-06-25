@@ -1,5 +1,21 @@
+import type { FieldNameType } from '$lib/admin/fields.js'
 import db from '$lib/server/prismadb.js'
+import type { DataRow, DataType } from '@prisma/client'
 import { error, fail } from '@sveltejs/kit'
+
+export type ComponentType = {
+  data: any[],
+  dataType: DataType & {
+    dataRows: DataRow[]
+  }
+}
+
+export type ColumnType = {
+  id: string,
+  name: string,
+  width: 'auto' | string,
+  field: FieldNameType
+}
 
 export const load = async ({params}) => {
   const { dataType, data } = await getData(params.slug)

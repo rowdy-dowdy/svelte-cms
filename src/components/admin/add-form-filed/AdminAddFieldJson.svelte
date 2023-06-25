@@ -3,10 +3,11 @@
   import IconCog from "$components/icons/IconCog.svelte";
   import { DATA_FIELDS } from "$lib/admin/fields";
   import { Button, Toggle } from "flowbite-svelte";
+  import slugify from "slugify";
   import { createEventDispatcher, onMount } from "svelte";
 
   export let value: string
-  let icon = DATA_FIELDS.find(v => v.fieldName == 'JSON')?.icon
+  let icon = DATA_FIELDS.find(v => v.fieldName == 'Plain text')?.icon
 
   let inputRef: HTMLInputElement | null
 
@@ -17,6 +18,17 @@
 	function onDelete() {
 		dispatch('onDelete');
 	}
+
+  const handelInput = (e: Event) => {
+    const { value: inputValue } = e.target as HTMLInputElement
+
+    value = slugify(inputValue, {
+      replacement: '_',
+      lower: true,
+      locale: 'vi',
+      trim: false
+    })
+  }
 
   onMount(() => {
     if (inputRef) {
@@ -32,7 +44,8 @@
       <span class="flex-none icon w-4 h-4">
         {@html icon}
       </span>
-      <input bind:this={inputRef} type="text" class="flex-grow min-w-0 bg-transparent border-none !ring-0 py-1" required bind:value={value}/>
+      <input bind:this={inputRef} type="text" class="flex-grow min-w-0 bg-transparent border-none !ring-0 py-1" 
+        required bind:value={value} on:input={handelInput}/>
     </div>
     <div class="flex-none p-2 border-l">
       <span class="icon w-8 h-8 p-1 cursor-pointer hover:bg-gray-300 rounded-full"

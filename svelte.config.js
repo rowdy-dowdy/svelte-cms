@@ -17,7 +17,15 @@ const config = {
       '$stores/*': './src/stores/*',
       '$routes/*': './src/routes/*'
     }
-	}
+	},
+  
+
+  onwarn: (warning, handler) => {
+    if (warning.code.startsWith('a11y-')) {
+      return;
+    }
+    handler(warning);
+  },
 };
 
 export default config;

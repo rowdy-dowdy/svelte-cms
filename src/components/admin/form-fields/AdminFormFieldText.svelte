@@ -25,6 +25,7 @@
         replacement: '_',
         lower: true,
         locale: 'vi',
+        trim: false
       })
   }
 
@@ -32,7 +33,7 @@
 
   onMount(() => {
     if (details?.slugify) {
-      inputRef?.addEventListener('change', slugifyEvent)
+      inputRef?.addEventListener('input', slugifyEvent)
     }
   })
 

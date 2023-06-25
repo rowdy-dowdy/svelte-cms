@@ -1,7 +1,8 @@
 import knex from 'knex'
 
 const dbRaw = knex({
-  client: 'sqlite3'
+  client: 'sqlite3',
+  useNullAsDefault: true
 })
 
 // knex('table').insert({a: 'b'}).returning('*').toString();
