@@ -2,12 +2,18 @@ import { DATA_FIELDS } from '$lib/admin/fields.js'
 import type { FieldNameType } from '$lib/admin/fields.js'
 import dbRaw from '$lib/server/knex.js'
 import db from '$lib/server/prismadb.js'
-import { fail } from '@sveltejs/kit'
+import type { DataRow } from '@prisma/client'
+import { fail, redirect } from '@sveltejs/kit'
 
 
-export const load = async () => {
+export const load = async ({ parent }) => {
+  const { dataTypes } = await parent()
 
-  return { scenes: [] }
+  if (dataTypes.length > 0) {
+    throw redirect(302, `/admin/${dataTypes[0].name}`);
+  }
+
+  return { dataTypes }
 }
 
 export const actions = {
@@ -118,6 +124,78 @@ export const actions = {
       await db.$executeRawUnsafe(sql)
   
       return { "message": "Message Completed" }
+    }
+    catch (e: any) {
+      return fail(400, { error: e?.errorText || 'Server Error' });
+    }
+  },
+
+  addEditRecord: async ({request}) => {
+    try {
+      var { editId, name, fields }: 
+      { 
+        name: string, 
+        editId?: string, 
+        fields: (Omit<DataRow, 'field'> & {
+          value: any
+          field: FieldNameType
+        })[] 
+      } = await request.json()
+  
+      if (!name) {
+        throw { errorText: 'Error'}
+      }
+
+      let sql = dbRaw(name).insert(fields.reduce<any>((pre, cur) => {
+        if (cur.field == "Bool") {
+          pre[cur.name] = cur.value ? 1 : 0
+        }
+        else {
+          pre[cur.name] = cur.value
+        }
+
+        return pre
+      },{})).toString()
+  
+      await db.$executeRawUnsafe(sql)
+  
+      return { message: "Mission Completed" }
+    }
+    catch (e: any) {
+      return fail(400, { error: e?.errorText || 'Server Error' });
+    }
+  },
+
+  deleteRecord: async ({request}) => {
+    try {
+      var { editId, name, fields }: 
+      { 
+        name: string, 
+        editId?: string, 
+        fields: (Omit<DataRow, 'field'> & {
+          value: any
+          field: FieldNameType
+        })[] 
+      } = await request.json()
+  
+      if (!name) {
+        throw { errorText: 'Error'}
+      }
+
+      let sql = dbRaw(name).insert(fields.reduce<any>((pre, cur) => {
+        if (cur.field == "Bool") {
+          pre[cur.name] = cur.value ? 1 : 0
+        }
+        else {
+          pre[cur.name] = cur.value
+        }
+
+        return pre
+      },{})).toString()
+  
+      await db.$executeRawUnsafe(sql)
+  
+      return { message: "Mission Completed" }
     }
     catch (e: any) {
       return fail(400, { error: e?.errorText || 'Server Error' });

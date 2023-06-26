@@ -10,7 +10,6 @@
   export let name: string
   export let required: boolean = false
   export let placeholder: string = ''
-  export let defaultValue: any = ''
   export let value: string = ''
 
   export let details: {
@@ -46,17 +45,10 @@
     {name}
   </p>
 
-  {#if defaultValue} 
-    <input bind:this={inputRef} type="text" name={name} id={id} value={defaultValue}
-      class="w-full border-none !bg-transparent p-0 !ring-0"
-      required={required} placeholder={placeholder}
-    />
-  {:else} 
-    <input bind:this={inputRef} type="text" name={name} id={id} bind:value={value}
-      class="w-full border-none !bg-transparent p-0 !ring-0"
-      required={required} placeholder={placeholder}
-    />
-  {/if}
+  <input bind:this={inputRef} type="text" name={name} id={id} bind:value={value}
+    class="w-full border-none !bg-transparent p-0 !ring-0"
+    required={required} placeholder={placeholder}
+  />
   
   
 </label>
