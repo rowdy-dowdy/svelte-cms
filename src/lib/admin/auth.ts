@@ -1,6 +1,6 @@
 import { applyAction, deserialize } from "$app/forms";
 import { invalidateAll } from "$app/navigation";
-import { alertStore } from "../../stores/alert";
+import { alertStore } from "$stores/alertStore";
 
 export const logout = async () => {
   let data: FormData = new FormData()

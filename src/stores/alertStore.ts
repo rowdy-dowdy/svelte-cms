@@ -16,6 +16,7 @@ function createAlert() {
 
 	return {
 		subscribe,
+    set,
 		addAlert: (alert: AlertTypeWithoutId) => update(n => {
       const uuid = v4();
       if (!alert.title) {
@@ -31,7 +32,7 @@ function createAlert() {
 
       setTimeout(() => {
         alertStore.delAlert(uuid)
-      }, 5000);
+      }, 2000);
 
       return [...n, {
         ...alert,

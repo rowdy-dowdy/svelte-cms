@@ -18,15 +18,14 @@
   import { applyAction, deserialize } from '$app/forms';
   import { v4 } from 'uuid';
   import AdminFormFieldText from '../form-fields/AdminFormFieldText.svelte';
-  import { alertStore } from '$stores/alert';
+  import { alertStore } from '$stores/alertStore';
   import { invalidateAll } from '$app/navigation';
+  import { collectionStore } from '$stores/collectionStore';
 
   type DataFieldType = (Omit<DataRow, 'field'> & {
     value: any
     field: FieldNameType
   })[]
-
-  export let hidden = true
 
   let transitionParamsRight = {
     x: 320,
@@ -82,7 +81,7 @@
   }
 </script>
 
-<Drawer placement='right' transitionType="fly" transitionParams={transitionParamsRight} bind:hidden={hidden} id='editAddCollection'
+<Drawer placement='right' transitionType="fly" transitionParams={transitionParamsRight} bind:hidden={$collectionStore.hidden} id='editAddCollection'
   width="w-full max-w-[700px]"
   divClass="overflow-y-auto z-50 p-0 bg-white dark:bg-gray-800 fixed inset-y-0 right-0"
 >
@@ -144,9 +143,13 @@
       </Dropdown>
     </div>
 
-    <div class="flex-none py-6 px-8 flex justify-end space-x-4 border-t">
-      <Button variant="text" onClick={() => hidden = true}>Cancel</Button>
-      <Button variant="contained" type='submit'>Create</Button>
+    <div class="flex-none py-6 px-8 flex items-center space-x-4 border-t">
+      {#if $collectionStore.editValue}
+        <button class="text-red-600 font-semibold text-sm hover:text-red-500" on:click={() => $collectionStore.hidden = true}>Delete</button>
+      {/if}
+
+      <Button color="none" class="!ml-auto" on:click={() => $collectionStore.hidden = true}>Cancel</Button>
+      <Button type='submit'>Create</Button>
     </div>
   </form>
 </Drawer>

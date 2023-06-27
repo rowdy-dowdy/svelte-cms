@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fly } from "svelte/transition";
   import { flip } from "svelte/animate";
-  import { alertStore } from "../../stores/alert";
+  import { alertStore } from "$stores/alertStore"
 </script>
 
 <div class="fixed w-full h-screen top-0 right-0 z-50 pointer-events-none overflow-hidden px-2">

@@ -8,7 +8,7 @@
   import { applyAction, deserialize } from '$app/forms';
   import { v4 } from 'uuid';
   import AdminFormFieldText from '../form-fields/AdminFormFieldText.svelte';
-  import { alertStore } from '$stores/alert';
+  import { alertStore } from '$stores/alertStore';
   import { invalidateAll } from '$app/navigation';
   import AdminFormFieldRichText from '../form-fields/AdminFormFieldRichText.svelte';
   import AdminFormFieldBool from '../form-fields/AdminFormFieldBool.svelte';
@@ -144,11 +144,11 @@
       {/each}
     </div>
 
-    <div class="flex-none py-6 px-8 flex space-x-4 border-t">
+    <div class="flex-none py-6 px-8 flex items-center space-x-4 border-t">
       {#if editValue}
-        <Button color="red" onClick={() => hidden = true}>Delete</Button>
+        <button class="text-red-600 font-semibold text-sm hover:text-red-500" on:click={() => hidden = true}>Delete</button>
       {/if}
-      <Button color="none" onClick={() => hidden = true} class="!ml-auto">Cancel</Button>
+      <Button color="none" on:click={() => hidden = true} class="!ml-auto">Cancel</Button>
       <Button type='submit'>{editValue ? 'Save' : 'Create'}</Button>
     </div>
   </form>

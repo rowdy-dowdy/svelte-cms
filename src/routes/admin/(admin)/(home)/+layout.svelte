@@ -1,12 +1,11 @@
 <script lang="ts">
   import ModalEditAddCollection from '$components/admin/modal/ModalEditAddCollection.svelte';
+  import { collectionStore } from '$stores/collectionStore.js';
   import { Button } from 'flowbite-svelte';
 
   export let data
 
   $: dataFilter = data.dataTypes
-
-  let hiddenModalEditAddCollection = true
 </script>
 
 <div class="w-full h-full flex">
@@ -38,14 +37,14 @@
           </div>
         {/if}
 
-        <Button class="!mt-4" outline size="sm" on:click={() => hiddenModalEditAddCollection = false}>
+        <Button class="!mt-4" outline size="sm" on:click={() => collectionStore.openAddEditCollection()}>
           <span class="icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path></svg>
           </span>
           <span>New collection</span>
         </Button>
 
-        <ModalEditAddCollection bind:hidden={hiddenModalEditAddCollection} />
+        <ModalEditAddCollection />
       </div>
     </div>
   </div>

@@ -5,7 +5,7 @@ import type { DataRow, DataType } from '@prisma/client'
 import { error, fail } from '@sveltejs/kit'
 
 export const load = async ({params, url}) => {
-  let perPage = +(url.searchParams.get('perPage') || 1)
+  let perPage = +(url.searchParams.get('perPage') || 5)
   let page = +(url.searchParams.get('page') || 1)
   if (page < 1) page = 1
 
@@ -34,4 +34,5 @@ export const load = async ({params, url}) => {
 }
 
 export const actions = {
+  
 }

@@ -74,7 +74,8 @@ export const actions = {
           }
         })
 
-        table.timestamps(true, true)
+        table.timestamp('createdAt').defaultTo(dbRaw.fn.now())
+        table.timestamp('createdAt').defaultTo(dbRaw.fn.now())
 
       }).toString()
   
@@ -146,58 +147,65 @@ export const actions = {
         throw { errorText: 'Error'}
       }
 
-      let sql = dbRaw(name).insert(fields.reduce<any>((pre, cur) => {
-        if (cur.field == "Bool") {
-          pre[cur.name] = cur.value ? 1 : 0
-        }
-        else {
-          pre[cur.name] = cur.value
-        }
+      let sql = ''
 
-        return pre
-      },{})).toString()
+      console.log(fields)
+
+      if (editId) {
+        // update record
+        sql = dbRaw(name).where('id', editId).update(
+          fields.reduce<any>((pre, cur) => {
+          if (cur.field == "Bool") {
+            pre[cur.name] = cur.value ? 1 : 0
+          }
+          else {
+            pre[cur.name] = cur.value
+          }
+  
+          return pre
+        },{})).toString()
+      }
+      else {
+        // create record
+        sql = dbRaw(name).insert(fields.reduce<any>((pre, cur) => {
+          if (cur.field == "Bool") {
+            pre[cur.name] = cur.value ? 1 : 0
+          }
+          else {
+            pre[cur.name] = cur.value
+          }
+  
+          return pre
+        },{})).toString()
+      }
+
   
       await db.$executeRawUnsafe(sql)
   
       return { message: "Mission Completed" }
     }
     catch (e: any) {
+      console.log({e})
       return fail(400, { error: e?.errorText || 'Server Error' });
     }
   },
 
   deleteRecord: async ({request}) => {
     try {
-      var { editId, name, fields }: 
-      { 
-        name: string, 
-        editId?: string, 
-        fields: (Omit<DataRow, 'field'> & {
-          value: any
-          field: FieldNameType
-        })[] 
-      } = await request.json()
+      var { id, name }: { id: string, name: string } = await request.json()
   
-      if (!name) {
+      if (!id || !name) {
         throw { errorText: 'Error'}
       }
 
-      let sql = dbRaw(name).insert(fields.reduce<any>((pre, cur) => {
-        if (cur.field == "Bool") {
-          pre[cur.name] = cur.value ? 1 : 0
-        }
-        else {
-          pre[cur.name] = cur.value
-        }
-
-        return pre
-      },{})).toString()
+      let sql = dbRaw(name).where('id', id).del().toString()
   
       await db.$executeRawUnsafe(sql)
   
       return { message: "Mission Completed" }
     }
     catch (e: any) {
+      console.log({e})
       return fail(400, { error: e?.errorText || 'Server Error' });
     }
   }

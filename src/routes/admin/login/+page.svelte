@@ -1,7 +1,7 @@
 <script lang="ts">
   import { applyAction, deserialize, enhance } from "$app/forms";
   import { Input, Label, Helper, Checkbox, Button, Spinner, A } from 'flowbite-svelte';
-  import { alertStore } from "$stores/alert";
+  import { alertStore } from "$stores/alertStore";
 
   let loading = false
 

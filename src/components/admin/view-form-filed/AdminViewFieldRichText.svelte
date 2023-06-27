@@ -8,12 +8,12 @@
     tempElement = document.createElement('div')
   }
 
-  let outerHtmlString = ''
+  let outerHtmlString = value.replace(/<[^>]+>/g, '')
 
   onMount(() => {
     if (tempElement) {
-      tempElement.innerHTML = value
-      outerHtmlString = tempElement.innerText
+      // tempElement.innerHTML = value
+      // outerHtmlString = tempElement.innerText
     }
   })
 

@@ -17,6 +17,6 @@
   whitespace-nowrap cursor-pointer transition-all {copied ? '!bg-green-300' : ''}" 
   on:click={copy}
 >
-  <span class="material-symbols-outlined text-sm">content_copy</span>
+  <span class="material-symbols-outlined !text-sm">content_copy</span>
   <span>{value}</span>
 </span>

@@ -12,6 +12,7 @@
   import AdminViewFieldBool from "$components/admin/view-form-filed/AdminViewFieldBool.svelte";
   import AdminViewFieldDateTime from "$components/admin/view-form-filed/AdminViewFieldDateTime.svelte";
   import { goto } from "$app/navigation";
+  import { collectionStore } from "$stores/collectionStore.js";
 
   export let data
 
@@ -101,7 +102,7 @@
   }
 
   let rowsPerPage: SelectOptionType[] = [
-    { name: 5, value: 10 },
+    { name: 5, value: 5 },
     { name: 10, value: 10 },
     { name: 20, value: 20 },
     { name: 50, value: 50 },
@@ -135,7 +136,9 @@
       <span class='text-gray-500'>Collections</span> <span class='px-3 select-none'>/</span>
       <span>{data.dataType.name}</span>
     </div>
-    <span class="icon p-2 w-10 h-10 rounded-full hover:bg-gray-200 cursor-pointer">
+    <span class="icon p-2 w-10 h-10 rounded-full hover:bg-gray-200 cursor-pointer"
+      on:click={() => collectionStore.openAddEditCollection(data.dataType)}
+    >
       <span class="material-symbols-outlined mate">settings</span>
     </span>
     <span class="icon p-2 w-10 h-10 rounded-full hover:bg-gray-200 cursor-pointer">
@@ -169,7 +172,7 @@
   </section>
 
   <section class="w-full custom-table">
-    <Table hoverable={true} striped={true} divClass="relative border border-gray-300 rounded-lg">
+    <Table hoverable={true} striped={true} divClass="relative border border-gray-300 rounded-lg overflow-hidden">
       <TableHead>
         <TableHeadCell class="w-0 pr-0">
           <Checkbox />
@@ -231,7 +234,7 @@
           </TableBodyRow>
         {:else}
           <TableBodyRow>
-            <TableBodyCell colspan={columns.length + 1}>
+            <TableBodyCell colspan={columns.length + 2}>
               <div class="flex flex-col items-center space-y-4">
                 <span>There are no records</span>
                 <Button size="xs" on:click={openAddEditRecord}>
@@ -247,7 +250,7 @@
             <section class="flex items-center justify-between space-x-4">
               <span class="text-gray-500">Showing 
                 <span class="text-primary-900">
-                  {(data.page - 1) * data.perPage} - 
+                  {(data.page - 1) * data.perPage + (data.data.length > 0 ? 1 : 0)} - 
                   {(data.page - 1) * data.perPage + data.data.length}</span> of 
                 <span>{data.count}</span>
               </span>
