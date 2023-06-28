@@ -17,25 +17,42 @@ export const load = async ({ parent }) => {
 }
 
 export const actions = {
-  createTable: async ({ cookies, request, url }) => {
+  createUpdateTable: async ({ cookies, request, url }) => {
     try {
-      var { name, fields }: 
+      var { name, fields, id }: 
       {
         name: string, 
+        id: string,
         fields: {
           id: string;
           field: FieldNameType
           name: string
         }[]
       } = await request.json()
+
+      if (id) {
+        await db.$transaction([
+          db.dataRow.deleteMany({
+            where: {
+              dataTypeId: id
+            }
+          }),
+          db.dataType.delete({
+            where: {
+              id: id
+            }
+          }),
+          db.$executeRawUnsafe(dbRaw.schema.dropTable(name).toString()),
+        ])
+      }
   
       if (!checkField(name, fields)) {
         throw { errorText: 'Pay attention when entering table names and data fields'}
       }
-
+    
       let sql = dbRaw.schema.createTable(name, (table) => {
         table.increments()
-
+    
         fields.forEach(v => {
           switch(v.field) {
             case "Bool":
@@ -45,9 +62,10 @@ export const actions = {
               table.dateTime(v.name)
               break
             case "Email":
-              table.string(v.name)
-              break
             case "File":
+            case "Plain text":
+            case "Url":
+            case "Select":
               table.string(v.name)
               break
             case "JSON":
@@ -56,29 +74,17 @@ export const actions = {
             case "Number":
               table.float(v.name)
               break
-            case "Plain text":
-              table.string(v.name)
-              break
-            case "Relation":
-              table.string(v.name)
-              break
             case "Rich text":
               table.text(v.name)
               break
-            case "Select":
-              table.string(v.name)
-              break
-            case "Url":
-              table.string(v.name)
-              break
           }
         })
-
+    
         table.timestamp('createdAt').defaultTo(dbRaw.fn.now())
-        table.timestamp('createdAt').defaultTo(dbRaw.fn.now())
-
+        table.timestamp('updatedAt').defaultTo(dbRaw.fn.now())
+    
       }).toString()
-  
+    
       let sqlUpdateAt = `
         CREATE TRIGGER tg_${name}_updated_at
         AFTER UPDATE
@@ -88,8 +94,8 @@ export const actions = {
             WHERE id = old.id;
         END
       `
-  
-      const [dataType, _] = await db.$transaction([
+    
+      await db.$transaction([
         db.dataType.create({
           data: {
             name: name,
@@ -109,20 +115,33 @@ export const actions = {
         db.$executeRawUnsafe(sqlUpdateAt)
       ])
   
-      return { data: dataType }
+      return { "message": "Message Completed" }
     }
     catch (e: any) {
-      return fail(400, { error: e?.errorText || 'Server Error' });
+      console.log({e})
+      return fail(400, { error: e?.errorText || 'Server Error' })
     }
   },
 
   deleteTable: async ({request}) => {
     try {
-      var { name, fields } = await request.json()
+      var { id, name } = await request.json()
 
       let sql = dbRaw.schema.dropTable(name).toString()
-  
-      await db.$executeRawUnsafe(sql)
+
+      await db.$transaction([
+        db.dataRow.deleteMany({
+          where: {
+            dataTypeId: id
+          }
+        }),
+        db.dataType.delete({
+          where: {
+            id: id
+          }
+        }),
+        db.$executeRawUnsafe(sql),
+      ])
   
       return { "message": "Message Completed" }
     }

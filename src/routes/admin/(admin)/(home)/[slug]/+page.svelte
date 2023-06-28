@@ -13,38 +13,45 @@
   import AdminViewFieldDateTime from "$components/admin/view-form-filed/AdminViewFieldDateTime.svelte";
   import { goto } from "$app/navigation";
   import { collectionStore } from "$stores/collectionStore.js";
+  import type { DataRow } from "@prisma/client";
 
   export let data
 
   let search = ''
 
-  const columns: {
+  let columns: {
     id: string,
     name: string,
     show: boolean,
     width: 'auto' | string,
     field: FieldNameType
-  }[] = [{
-    id: v4(),
-    name: 'id',
-    width: 'auto',
-    show: true,
-    field: 'ID'
-  }, ...data.dataType.dataRows.map(v => ({
-    id: v.id, name: v.name, show: true, field: v.field as FieldNameType, width: 'auto'
-  })).concat({
-    id: v4(),
-    name: 'createdAt',
-    width: '1px',
-    show: true,
-    field: 'DateTime'
-  }, {
-    id: v4(),
-    name: 'updatedAt',
-    width: '1px',
-    show: true,
-    field: 'DateTime'
-  })]
+  }[] = []
+
+  $: changeColumns(data.dataType.dataRows)
+
+  const changeColumns = (dataRows: DataRow[]) => {
+    columns = [{
+      id: v4(),
+      name: 'id',
+      width: 'auto',
+      show: true,
+      field: 'ID'
+    }, ...dataRows.map(v => ({
+      id: v.id, name: v.name, show: true, field: v.field as FieldNameType, width: 'auto'
+    })).concat({
+      id: v4(),
+      name: 'createdAt',
+      width: '1px',
+      show: true,
+      field: 'DateTime'
+    }, {
+      id: v4(),
+      name: 'updatedAt',
+      width: '1px',
+      show: true,
+      field: 'DateTime'
+    })]
+  }
 
   let pages: LinkType[] = []
 
@@ -94,11 +101,12 @@
     let query = new URLSearchParams($page.url.searchParams.toString())
     if (data.page > 1 && type == "previous") {
       query.set('page', `${data.page - 1}`)
+      goto(`?${query}`)
     }
     else if (data.page < lastPage && type == "next") {
       query.set('page', `${data.page + 1}`)
+      goto(`?${query}`)
     }
-    goto(`?${query}`)
   }
 
   let rowsPerPage: SelectOptionType[] = [
@@ -117,7 +125,7 @@
     goto(`?${query.toString()}`)
   }
 
-  let hiddenModalEditAddRecord = true
+  let showModalEditAddRecord = false
   let recordEdit: any | undefined = undefined
 
   const openAddEditRecord = (e: Event, row?: any) => {
@@ -125,7 +133,7 @@
 
     recordEdit = row
     
-    hiddenModalEditAddRecord = false
+    showModalEditAddRecord = true
   }
 
 </script>
@@ -268,7 +276,7 @@
   </section>
 </div>
 
-<ModalEditAddRecord dataType={data.dataType} bind:editValue={recordEdit} bind:hidden={hiddenModalEditAddRecord} />
+<ModalEditAddRecord bind:dataType={data.dataType} bind:editValue={recordEdit} bind:show={showModalEditAddRecord} />
 
 <style>
   .custom-table :global(table) {

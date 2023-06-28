@@ -3,7 +3,7 @@
   import type { FieldNameType } from '$lib/admin/fields';
   import { clickOutside } from '$lib/utils/clickOutSide';
   import type { DataRow, DataType } from '@prisma/client';
-  import { Drawer, Button, CloseButton, Dropdown, Spinner } from 'flowbite-svelte'
+  import { Button, CloseButton, Dropdown, Spinner } from 'flowbite-svelte'
   import { sineIn } from 'svelte/easing';
   import { applyAction, deserialize } from '$app/forms';
   import { v4 } from 'uuid';
@@ -20,23 +20,20 @@
   import AdminFormFieldRelation from '../form-fields/AdminFormFieldRelation.svelte';
   import AdminFormFieldJson from '../form-fields/AdminFormFieldJson.svelte';
   import AdminFormFieldNumber from '../form-fields/AdminFormFieldNumber.svelte';
+  import Modal from '../Modal.svelte';
+  import Drawer from '../Drawer.svelte';
 
   type DataFieldType = (Omit<DataRow, 'field'> & {
     value: any
     field: FieldNameType
   })
 
-  export let hidden = true
+  export let show = false
   export let dataType: DataType & {
     dataRows: DataRow[]
   }
   export let editValue: any | undefined
 
-  let transitionParamsRight = {
-    x: 320,
-    duration: 200,
-    easing: sineIn
-  }
 
   const setDataValue = (editValue?: any) => {
     if (editValue) {
@@ -95,7 +92,7 @@
         type: "success"
       })
       await invalidateAll()
-      hidden = true
+      show = false
     }
     else {
       alertStore.addAlert({
@@ -103,14 +100,42 @@
         description: result?.data?.error
       })
     }
+  }
 
+  let openDeleteModal = false
+  const handelSubmitDelete = async () => {
+    if (loading) return
+    openDeleteModal = false
+    loading = true
+
+    const response = await fetch('/admin?/deleteRecord', {
+      method: 'POST',
+      body: JSON.stringify({
+        id: editValue?.id,
+        name: dataType.name,
+      })
+    });
+
+    const result: any = deserialize(await response.text())
+    loading = false
+
+    if (result.type == "success") {
+      alertStore.addAlert({
+        type: "success"
+      })
+      await invalidateAll()
+      show = false
+    }
+    else {
+      alertStore.addAlert({
+        type: 'error',
+        description: result?.data?.error
+      })
+    }
   }
 </script>
 
-<Drawer placement='right' transitionType="fly" transitionParams={transitionParamsRight} bind:hidden={hidden} id='editAddCollection'
-  width="w-full max-w-[850px]"
-  divClass="overflow-y-auto z-50 p-0 bg-white dark:bg-gray-800 fixed inset-y-0 right-0"
->
+<Drawer bind:show={show} class="w-full max-w-[850px]">
   <form class='w-full max-w-[100vw] flex flex-col h-full' action="/admin?/addEditRecord" on:submit|preventDefault={handelSubmit}>
     <div class="flex-none bg-gray-100 py-6 px-8">
       <h3 class='text-xl'>{editValue ? `Edit ${dataType.name} record` : 'New record'}</h3>
@@ -146,16 +171,25 @@
 
     <div class="flex-none py-6 px-8 flex items-center space-x-4 border-t">
       {#if editValue}
-        <button class="text-red-600 font-semibold text-sm hover:text-red-500" on:click={() => hidden = true}>Delete</button>
+        <button class="text-red-600 font-semibold text-sm hover:text-red-500" on:click|preventDefault={() => openDeleteModal = true}>Delete</button>
       {/if}
-      <Button color="none" on:click={() => hidden = true} class="!ml-auto">Cancel</Button>
+      <Button color="none" on:click={() => show = false} class="!ml-auto">Cancel</Button>
       <Button type='submit'>{editValue ? 'Save' : 'Create'}</Button>
     </div>
   </form>
 </Drawer>
 
+<Modal bind:show={openDeleteModal}>
+  <div class="text-center">
+    <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+    <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this record?</h3>
+    <Button color="red" class="mr-2" on:click={handelSubmitDelete}>Yes, I'm sure</Button>
+    <Button color='alternative' on:click={() => openDeleteModal = false}>No, cancel</Button>
+  </div>
+</Modal>
+
 {#if loading}
-  <div class="fixed top-0 left-0 right-0 bottom-0 bg-black/70 grid place-items-center">
+  <div class="fixed top-0 left-0 right-0 bottom-0 bg-black/70 grid place-items-center z-50">
     <Spinner color="green" size="10" />
   </div>
 {/if}

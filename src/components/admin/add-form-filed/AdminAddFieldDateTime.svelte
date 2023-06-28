@@ -38,29 +38,34 @@
   })
 </script>
 
-<div class='rounded bg-gray-200 w-full group'>
-  <div class="flex items-center w-full relative text-sm">
-    <div class="flex-grow min-w-0 m-1.5 p-1 flex items-center space-x-2 focus-within:bg-gray-300 rounded">
-      <span class="flex-none icon w-4 h-4">
-        {@html icon}
-      </span>
-      <input bind:this={inputRef} type="text" class="flex-grow min-w-0 bg-transparent border-none !ring-0 py-1" 
-        required bind:value={value} on:input={handelInput}/>
-    </div>
-    <div class="flex-none p-2 border-l">
-      <span class="icon w-8 h-8 p-1 cursor-pointer hover:bg-gray-300 rounded-full"
-        on:click|stopPropagation={() => expanded = !expanded}
-      ><IconCog /></span>
-    </div>
+<div class="flex items-stretch -ml-8 group">
+  <div class="item grid place-items-center px-2 cursor-pointer opacity-0 group-hover:opacity-100 transition-all">
+    <span class="material-symbols-outlined text-lg text-gray-500">drag_indicator</span>
   </div>
-  <Collapse bind:show={expanded}>
-    <div class='rounded-b border-2 border-gray-300 p-2 bg-white'>
-      <div class="flex justify-between items-center">
-        <div class="select-none cursor-pointer">
-          <Toggle size='small' >None Empty</Toggle>
-        </div>
-        <span on:click={onDelete} class="text-sm text-red-600 cursor-pointer hover:underline">Remove</span>
+  <div class='flex-grow min-w-0 rounded bg-gray-200 w-full group'>
+    <div class="flex items-center w-full relative text-sm cursor-move">
+      <div class="flex-grow min-w-0 m-1.5 p-1 flex items-center focus-within:bg-gray-300 rounded">
+        <span class="flex-none icon w-4 h-4">
+          {@html icon}
+        </span>
+        <input bind:this={inputRef} type="text" class="flex-grow min-w-0 bg-transparent border-none !ring-0 py-1"
+          required bind:value={value} on:input={handelInput}/>
+      </div>
+      <div class="flex-none p-2 border-l">
+        <span class="icon w-8 h-8 p-1 cursor-pointer hover:bg-gray-300 rounded-full"
+          on:click|stopPropagation={() => expanded = !expanded}
+        ><IconCog /></span>
       </div>
     </div>
-  </Collapse>
+    <Collapse bind:show={expanded}>
+      <div class='rounded-b border-2 border-gray-300 p-2 bg-white'>
+        <div class="flex justify-between items-center">
+          <div class="select-none cursor-pointer">
+            <Toggle size='small' >None Empty</Toggle>
+          </div>
+          <span on:click={onDelete} class="text-sm text-red-600 cursor-pointer hover:underline">Remove</span>
+        </div>
+      </div>
+    </Collapse>
+  </div>
 </div>

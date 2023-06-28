@@ -2,7 +2,7 @@ import type { DataRow, DataType } from '@prisma/client';
 import { writable } from 'svelte/store';
 
 type TypeStore = {
-  hidden: boolean,
+  show: boolean,
   editValue?: DataType & {
     dataRows: DataRow[]
   }
@@ -10,7 +10,7 @@ type TypeStore = {
 
 function createStore() {
 	const { subscribe, set, update } = writable<TypeStore>({
-    hidden: true,
+    show: false,
     editValue: undefined
   });
 
@@ -19,7 +19,7 @@ function createStore() {
     set,
 		openAddEditCollection: (data?: DataType & { dataRows: DataRow[] }) => update(n => ({
       editValue: data,
-      hidden: false,
+      show: true,
     }))
 	};
 }
