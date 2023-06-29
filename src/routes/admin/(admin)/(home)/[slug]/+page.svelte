@@ -245,7 +245,10 @@
             <TableBodyCell colspan={columns.length + 2}>
               <div class="flex flex-col items-center space-y-4">
                 <span>There are no records</span>
-                <Button size="xs" on:click={openAddEditRecord}>
+                <Button size="xs" on:click={(e) => {
+                  e.stopPropagation()
+                  openAddEditRecord(e)
+                }}>
                   <span class="material-symbols-outlined">add</span>
                   <span>&nbsp;New Records</span>
                 </Button>

@@ -35,7 +35,7 @@
   export let editValue: any | undefined
 
 
-  const setDataValue = (editValue?: any) => {
+  const setDataValue = (dataRows: DataRow[], editValue?: any) => {
     if (editValue) {
       data = data.map(v => {
         let tempValue = editValue[v.name]
@@ -51,7 +51,7 @@
       })
     }
     else {
-      data = dataType.dataRows.map(v => {
+      data = dataRows.map(v => {
         let tempValue: any = ''
         if ((v.field as FieldNameType) == "Bool") {
           tempValue = true
@@ -68,7 +68,7 @@
 
   let data: DataFieldType[] = []
 
-  $: setDataValue(editValue)
+  $: setDataValue(dataType.dataRows, editValue)
 
   let loading = false
   const handelSubmit = async (e: SubmitEvent) => {
@@ -150,7 +150,7 @@
         {:else if item.field == "Number"}
           <AdminFormFieldNumber id={item.id} name={item.name} bind:value={data[i].value} />
         {:else if item.field == "Bool"}
-          <AdminFormFieldBool id={item.id} name={item.name} bind:value={data[i].value} />
+          <AdminFormFieldBool name={item.name} bind:value={data[i].value} />
         {:else if item.field == "Email"}
           <AdminFormFieldEmail id={item.id} name={item.name} bind:value={data[i].value} />
         {:else if item.field == "Url"}

@@ -49,6 +49,4 @@
     class="w-full border-none !bg-transparent p-0 !ring-0"
     required={required} placeholder={placeholder}
   />
-  
-  
 </label>

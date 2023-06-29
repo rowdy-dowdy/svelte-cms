@@ -7,7 +7,10 @@
   import { createEventDispatcher, onMount } from "svelte";
 
   export let value: string
-  let icon = DATA_FIELDS.find(v => v.fieldName == 'Plain text')?.icon
+  export let details: any = {
+    type: 'single'
+  }
+  let icon = DATA_FIELDS.find(v => v.fieldName == 'File')?.icon
 
   let inputRef: HTMLInputElement | null
 
@@ -51,6 +54,14 @@
         <input bind:this={inputRef} type="text" class="flex-grow min-w-0 bg-transparent border-none !ring-0 py-1"
           required bind:value={value} on:input={handelInput}/>
       </div>
+
+      <div class="flex-none self-stretch  border-l border-gray-300 p-1.5">
+        <select bind:value={details.type} class="w-full h-full px-2 flex items-center focus-within:bg-gray-300 rounded bg-transparent focus:ring-0 border-none text-sm">
+          <option value="multiple">Multiple</option>
+          <option value="single" selected>Single</option>
+        </select>
+      </div>
+
       <div class="flex-none p-2 border-l">
         <span class="icon w-8 h-8 p-1 cursor-pointer hover:bg-gray-300 rounded-full"
           on:click|stopPropagation={() => expanded = !expanded}

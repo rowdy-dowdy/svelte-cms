@@ -26,11 +26,13 @@ export const actions = {
         fields: {
           id: string;
           field: FieldNameType
-          name: string
+          name: string,
+          details?: any
         }[]
       } = await request.json()
 
       if (id) {
+        // detele 
         await db.$transaction([
           db.dataRow.deleteMany({
             where: {
@@ -103,7 +105,8 @@ export const actions = {
               create: fields.map((v) => ({
                 id: v.id,
                 name: v.name,
-                field: v.field
+                field: v.field,
+                details: JSON.stringify(v.details)
               }))
             }
           },

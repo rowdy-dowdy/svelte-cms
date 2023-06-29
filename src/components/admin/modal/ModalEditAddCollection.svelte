@@ -27,14 +27,17 @@
   import { onMount, tick } from 'svelte';
   import { browser } from '$app/environment';
 
+  export let dataTypes: DataType[]
+  let dataTypesRelation: DataType[] = dataTypes
   let nameCollection = ''
-  let data: {id: string, field: FieldNameType, name: string, }[] = []
+  let data: {id: string, field: FieldNameType, name: string, details?: any}[] = []
 
   const addField = (fieldName: FieldNameType) => {
     data = [...data, {
       id: v4(),
       name: "field",
       field: fieldName,
+      details: undefined
     }]
   }
 
@@ -50,6 +53,7 @@
     if (!editValue) {
       nameCollection = ''
       data = []
+      dataTypesRelation = dataTypes
       return
     }
 
@@ -58,10 +62,12 @@
     let tempValue: any[] = editValue.dataRows.slice().map(v => ({
       id: v.id,
       name: v.name,
-      field: v.field
+      field: v.field,
+      details: v.details ? JSON.parse(v.details) : v.details
     }))
 
     data = tempValue
+    dataTypesRelation = dataTypes.filter(v => v.id != editValue.id)
   }
 
   // sort list scene
@@ -176,7 +182,7 @@
 <Drawer bind:show={$collectionStore.show} class="w-full max-w-[700px]">
   <form class='w-full max-w-[100vw] flex flex-col h-full' action="/admin?/createUpdateTable" on:submit|preventDefault={handelSubmit}>
     <div class="flex-none bg-gray-100 py-6 px-8">
-      <h3 class='text-xl'>New Collection</h3>
+      <h3 class='text-xl'>{$collectionStore.editValue ? `Edit ${$collectionStore.editValue.name} collection` : 'New Collection'}</h3>
       <AdminFormFieldText bind:value={nameCollection} id="nameCollection" name='name' required placeholder='eg. "posts' class='mt-6' details={{ slugify: true }} />
     </div>
 
@@ -204,11 +210,11 @@
           {:else if item.field == "DateTime"}
             <AdminAddFieldDateTime bind:value={item.name} on:onDelete={() => deleteField(item.id)} />
             {:else if item.field == "Select"}
-            <AdminAddFieldSelect bind:value={item.name} on:onDelete={() => deleteField(item.id)} />
+            <AdminAddFieldSelect bind:value={item.name} bind:details={item.details} on:onDelete={() => deleteField(item.id)} />
           {:else if item.field == "File"}
-            <AdminAddFieldFile bind:value={item.name} on:onDelete={() => deleteField(item.id)} />
+            <AdminAddFieldFile bind:value={item.name} bind:details={item.details} on:onDelete={() => deleteField(item.id)} />
             {:else if item.field == "Relation"}
-            <AdminAddFieldRelation bind:value={item.name} on:onDelete={() => deleteField(item.id)} />
+            <AdminAddFieldRelation bind:value={item.name} bind:details={item.details} bind:dataTypes={dataTypesRelation} on:onDelete={() => deleteField(item.id)} />
           {:else if item.field == "JSON"}
             <AdminAddFieldJson bind:value={item.name} on:onDelete={() => deleteField(item.id)} />
           {/if}

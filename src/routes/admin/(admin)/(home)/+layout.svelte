@@ -44,7 +44,7 @@
           <span>New collection</span>
         </Button>
 
-        <ModalEditAddCollection />
+        <ModalEditAddCollection bind:dataTypes={data.dataTypes} />
       </div>
     </div>
   </div>
