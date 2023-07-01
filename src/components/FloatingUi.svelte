@@ -1,12 +1,14 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { clickOutside } from '$lib/utils/clickOutSide';
-  import { autoPlacement, autoUpdate, computePosition, flip, shift } from '@floating-ui/dom';
+  import { autoUpdate, computePosition, flip, shift } from '@floating-ui/dom';
   import type { Placement, Strategy, Middleware, Platform } from '@floating-ui/dom';
-  import { onMount, tick } from 'svelte';
+  import { onDestroy, onMount, tick } from 'svelte';
 
-  export let referenceEl: HTMLElement | null
+  export let referenceEl: HTMLElement
   export let show = true
   export let fullWidth = false
+  export let placement: Placement | undefined = 'bottom'
   let floatingEl: HTMLElement
 
   let position: {
@@ -16,49 +18,36 @@
     platform?: Platform
   } | undefined = {
     strategy: 'fixed',
-    placement: "top",
+    placement: placement,
     middleware: [flip(), shift()],
   }
 
-  $: update(show)
-
-  const update = async (show: boolean) => {
-    if (!show) return
-    await tick()
-    if (referenceEl && floatingEl ) {
-      autoUpdate(referenceEl, floatingEl, () => {
-        computePosition(referenceEl!, floatingEl, position).then(({x, y}) => {
-          Object.assign(floatingEl.style, {
-            width: fullWidth ? `${referenceEl!.clientWidth}px` : 'auto',
-            top: `${y}px`,
-            left: `${x}px`
-          });
-        });
-      })
-    }
-  }
+  let cleanup: any = null
 
   onMount(async () => {
-    await tick()
-    if (referenceEl && floatingEl && show) {
-      autoUpdate(referenceEl, floatingEl, () => {
-        computePosition(referenceEl!, floatingEl, position).then(({x, y}) => {
-          Object.assign(floatingEl.style, {
-            width: fullWidth ? `${referenceEl!.clientWidth}px` : 'auto',
-            top: `${y}px`,
-            left: `${x}px`
-          });
+    // await tick()
+    cleanup = autoUpdate(referenceEl, floatingEl, () => {
+      computePosition(referenceEl!, floatingEl, position).then(({x, y}) => {
+        Object.assign(floatingEl.style, {
+          width: fullWidth ? `${referenceEl!.clientWidth}px` : 'auto',
+          top: `${y}px`,
+          left: `${x}px`
         });
-      })
-    }
+      });
+    })
+  })
+
+  onDestroy(async () => {
+    cleanup()
+    // load = true
   })
 
 </script>
 
-{#if show}
+<!-- {#if !load} -->
   <div bind:this={floatingEl} id="tooltip" class="fixed" 
     use:clickOutside on:clickOutside={() => show = false}
   >
     <slot />
   </div>
-{/if}
+<!-- {/if} -->

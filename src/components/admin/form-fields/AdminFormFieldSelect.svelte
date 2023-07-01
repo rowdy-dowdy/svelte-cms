@@ -36,9 +36,11 @@
   >
     --Select--
   </div>
-  <FloatingUi bind:referenceEl={referenceEl} bind:show={show} fullWidth={true}>
-    <div class="w-full p-2 border shadow bg-white h-96">
-      fsdf
-    </div>
-  </FloatingUi>
+  {#if show}
+    <FloatingUi bind:referenceEl={referenceEl} bind:show={show} fullWidth={true}>
+      <div class="w-full p-1 border shadow bg-white max-h-56 overflow-y-auto">
+        <div class="rounded hover:bg-gray-100 px-2 py-1 cursor-pointer">fsda  fdsf sdf</div>
+      </div>
+    </FloatingUi>
+  {/if}
 </label>
