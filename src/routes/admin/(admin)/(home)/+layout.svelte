@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import ModalEditAddCollection from '$components/admin/modal/ModalEditAddCollection.svelte';
   import { collectionStore } from '$stores/collectionStore.js';
   import { Button } from 'flowbite-svelte';
@@ -23,9 +24,10 @@
         </div> -->
 
         {#each dataFilter as item (item.id)}
-          <a href="/admin/{item.name}" class="flex items-center space-x-2 rounded hover:bg-gray-200 p-2 cursor-pointer">
-            <span class="icon">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M20 5h-8.586L9.707 3.293A.997.997 0 0 0 9 3H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2zM4 19V7h16l.002 12H4z"></path></svg>
+          <a href="/admin/{item.name}" class="flex items-center space-x-2 rounded hover:bg-gray-200 p-2 cursor-pointer 
+            {$page.url.pathname == `/admin/${item.name}` ? 'bg-gray-200' : ''}">
+            <span class="material-symbols-outlined">
+              folder
             </span>
             <span>{item.name}</span>
           </a>
